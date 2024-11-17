@@ -9,6 +9,7 @@ dependencies = [
     "mangum>=0.19.0",
     "phonenumbers>=8.13.50",
     "pydantic-extra-types>=2.10.0",
+    "twilio>=9.3.7",
 ]
 
 [tool.ruff]
@@ -16,7 +17,7 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D100", "PLR2004", "D203", "D212", "COM812", "ISC001"]
+ignore = ["D100", "PLR2004", "D203", "D212", "COM812", "ISC001", "EM101", "TRY003", "UP007"]
 
 [dependency-groups]
 dev = [
