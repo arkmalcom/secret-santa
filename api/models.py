@@ -16,6 +16,7 @@ class User(BaseModel):
     user_public_id: str
     name: str
     phone_number: Optional[DONumberType] = None
+    has_been_assigned: bool = False
 
     def __init__(self, **data: dict) -> None:
         """Initialize the user with a public id."""
@@ -26,10 +27,10 @@ class User(BaseModel):
 class Pairing(BaseModel):
     """Pairing of users for secret santa."""
 
-    pairing_id: str
+    giving_user_id: str
     list_id: str
-    giving_user: str
-    receiving_user: str
+    giving_user_name: str
+    receiving_user_name: str
 
 
 class SecretSantaList(BaseModel):

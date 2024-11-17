@@ -7,9 +7,9 @@ from mangum import Mangum
 from models import Pairing, SecretSantaList
 from utils import (
     batch_write_to_dynamodb,
-    get_pairing_from_dynamodb,
     get_participant_by_public_id,
-    get_random_participant,
+    get_random_pairing,
+    get_user_pairing,
     write_to_dynamodb,
 )
 
@@ -42,21 +42,17 @@ async def create_secret_santa_list(secret_santa_list: SecretSantaList) -> JSONRe
 @api_router.get("/pairings/create/{list_id}/{user_public_id}")
 def create_secret_santa_pairing(list_id: str, user_public_id: str) -> JSONResponse:
     """Create a secret santa pairing for a user."""
-    random_participant = get_random_participant("secret_santa_participants", list_id)
-    giving_user = get_participant_by_public_id("secret_santa_participants", list_id, user_public_id)
+    receiving_user = get_random_pairing(list_id, user_public_id)
+    giving_user = get_participant_by_public_id(list_id, user_public_id)
 
-    while random_participant.user_public_id == user_public_id:
-        random_participant = get_random_participant("secret_santa_participants", list_id)
-
-    pairing_id = str(uuid.uuid4())
     pairing = Pairing(
-        pairing_id=pairing_id,
         list_id=list_id,
-        giving_user=giving_user.name,
-        receiving_user=random_participant.name,
+        giving_user_id=giving_user.user_public_id,
+        giving_user_name=giving_user.name,
+        receiving_user_name=receiving_user.name,
     )
 
-    write_to_dynamodb("secret_santa_pairing", pairing.model_dump())
+    write_to_dynamodb("secret_santa_pairings", pairing.model_dump())
 
     return JSONResponse(
         content={"message": "Successfully created secret santa pairing."},
@@ -64,10 +60,10 @@ def create_secret_santa_pairing(list_id: str, user_public_id: str) -> JSONRespon
     )
 
 
-@api_router.get("/pairings/{pairing_id}/{list_id}")
-def get_user_pairing(list_id: str, pairing_id: str) -> JSONResponse:
+@api_router.get("/pairings/{list_id}/{giving_user_id}")
+def get_secret_santa_pairing(list_id: str, giving_user_id: str) -> JSONResponse:
     """Get the secret santa pairing for a user."""
-    pairing = get_pairing_from_dynamodb("secret_santa_pairing", pairing_id, list_id)
+    pairing = get_user_pairing(list_id, giving_user_id)
 
     return JSONResponse(
         content={
