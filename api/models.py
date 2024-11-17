@@ -1,26 +1,23 @@
-from fastapi import HTTPException
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel
+from pydantic_extra_types.phone_numbers import PhoneNumber
 
 
 class User(BaseModel):
     """Base class for user to be included in secret santa list."""
 
     name: str
-    email: EmailStr
+    phone_number: PhoneNumber
+
+
+class Pairing(BaseModel):
+    """Pairing of users for secret santa."""
+
+    pairing_id: str
+    giving_user: str
+    receiving_user: str
 
 
 class SecretSantaList(BaseModel):
     """Secret Santa that includes a list of users."""
 
     users: list[User]
-
-    @field_validator("users")
-    @classmethod
-    def validate_users(cls, users: list[User]) -> list[User]:
-        """Ensure users are unique."""
-        unique_user_count = len({user.email for user in users})
-
-        if unique_user_count != len(users):
-            raise HTTPException(status_code=400, detail="User emails must be unique.")
-
-        return users

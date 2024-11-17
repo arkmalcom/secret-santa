@@ -7,7 +7,8 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.5",
     "mangum>=0.19.0",
-    "pydantic[email]>=2.9.2",
+    "phonenumbers>=8.13.50",
+    "pydantic-extra-types>=2.10.0",
 ]
 
 [tool.ruff]
@@ -15,7 +16,7 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D100", "PLR2004", "D203", "D212"]
+ignore = ["D100", "PLR2004", "D203", "D212", "COM812", "ISC001"]
 
 [dependency-groups]
 dev = [
