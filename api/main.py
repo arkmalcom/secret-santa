@@ -2,7 +2,6 @@ import uuid
 
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from mangum import Mangum
 
 from models import Pairing, SecretSantaList
 from utils import (
@@ -13,7 +12,7 @@ from utils import (
     write_to_dynamodb,
 )
 
-app = FastAPI(root_path="/prod/")
+app = FastAPI()
 api_router = APIRouter()
 
 
@@ -74,11 +73,3 @@ def get_secret_santa_pairing(list_id: str, giving_user_id: str) -> JSONResponse:
 
 
 app.include_router(api_router, prefix="/api")
-
-
-def handler(event: dict, context: dict) -> dict:
-    """Handle the Lambda event."""
-    event["requestContext"] = event.get("requestContext", {})
-
-    asgi_handler = Mangum(app)
-    return asgi_handler(event, context)
