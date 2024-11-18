@@ -13,7 +13,7 @@ from utils import (
     write_to_dynamodb,
 )
 
-app = FastAPI()
+app = FastAPI(root_path="/prod/")
 api_router = APIRouter()
 
 
@@ -75,4 +75,10 @@ def get_secret_santa_pairing(list_id: str, giving_user_id: str) -> JSONResponse:
 
 app.include_router(api_router, prefix="/api")
 
-handler = Mangum(app)
+
+def handler(event: dict, context: dict) -> dict:
+    """Handle the Lambda event."""
+    event["requestContext"] = event.get("requestContext", {})
+
+    asgi_handler = Mangum(app)
+    return asgi_handler(event, context)
