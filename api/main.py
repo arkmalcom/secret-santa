@@ -2,6 +2,7 @@ import uuid
 
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from starlette.middleware.cors import CORSMiddleware
 
 from models import Pairing, SecretSantaList
 from utils import (
@@ -15,6 +16,14 @@ from utils import (
 
 app = FastAPI()
 api_router = APIRouter()
+
+app.add_middleware(
+    CORSMiddleware,
+    # TODO: Modify the `allow_origins` parameter to only allow requests from the frontend URL.
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @api_router.post("/lists/create")

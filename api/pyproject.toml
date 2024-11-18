@@ -15,7 +15,20 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D100", "PLR2004", "D203", "D212", "COM812", "ISC001", "EM101", "TRY003", "UP007"]
+ignore = [
+    "D100",
+    "PLR2004",
+    "D203",
+    "D212",
+    "COM812",
+    "ISC001",
+    "EM101",
+    "TRY003",
+    "UP007",
+    "TD002",
+    "TD003",
+    "FIX002"
+]
 
 [dependency-groups]
 dev = [
