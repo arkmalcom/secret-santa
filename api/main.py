@@ -9,6 +9,7 @@ from utils import (
     get_participant_by_public_id,
     get_random_pairing,
     get_user_pairing,
+    update_assigned_participant,
     write_to_dynamodb,
 )
 
@@ -38,7 +39,7 @@ async def create_secret_santa_list(secret_santa_list: SecretSantaList) -> JSONRe
     )
 
 
-@api_router.get("/pairings/create/{list_id}/{user_public_id}")
+@api_router.post("/pairings/create/{list_id}/{user_public_id}")
 def create_secret_santa_pairing(list_id: str, user_public_id: str) -> JSONResponse:
     """Create a secret santa pairing for a user."""
     receiving_user = get_random_pairing(list_id, user_public_id)
@@ -52,6 +53,7 @@ def create_secret_santa_pairing(list_id: str, user_public_id: str) -> JSONRespon
     )
 
     write_to_dynamodb("secret_santa_pairings", pairing.model_dump())
+    update_assigned_participant(list_id, receiving_user.user_public_id)
 
     return JSONResponse(
         content={"message": "Successfully created secret santa pairing."},

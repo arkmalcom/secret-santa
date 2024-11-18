@@ -1,6 +1,7 @@
 import random
 
 import boto3
+from boto3.dynamodb.conditions import Attr, Key
 from fastapi import HTTPException
 
 from models import Pairing, User
@@ -26,46 +27,29 @@ def batch_write_to_dynamodb(table_name: str, items: list[dict]) -> None:
 def get_random_pairing(list_id: str, giving_user_id: str) -> dict:
     """Get a random participant from a DynamoDB table."""
     table = dynamodb.Table("secret_santa_participants")
+    is_not_assigned = False
 
-    response = table.scan(
-        FilterExpression="list_id = :list_id",
-        ExpressionAttributeValues={":list_id": list_id},
+    response = table.query(
+        KeyConditionExpression=Key("list_id").eq(list_id),
+        FilterExpression=Attr("has_been_assigned").eq(is_not_assigned),
     )
     participants = response.get("Items", [])
+
+    participants = [participant for participant in participants if participant["user_public_id"] != giving_user_id]
 
     if not participants:
         return HTTPException(status_code=404, detail="No participants found")
 
     random.shuffle(participants)
-    random_user = User(**participants[0])
-    participant_count = len(participants)
-    participants_cycled = 0
-
-    while (
-        random_user.user_public_id == giving_user_id
-        and not random_user.has_been_assigned
-        and participants_cycled < participant_count
-    ):
-        random.shuffle(participants)
-        random_user = User(**participants[0])
-        participants_cycled += 1
-
-    if participants_cycled == participant_count:
-        return HTTPException(status_code=404, detail="No unassigned participants found")
-
-    return random_user
+    return User(**participants[0])
 
 
 def get_participant_by_public_id(list_id: str, user_public_id: str) -> dict:
     """Get a participant by public ID from a DynamoDB table."""
     table = dynamodb.Table("secret_santa_participants")
 
-    response = table.scan(
-        FilterExpression="list_id = :list_id AND user_public_id = :user_public_id",
-        ExpressionAttributeValues={
-            ":list_id": list_id,
-            ":user_public_id": user_public_id,
-        },
+    response = table.query(
+        KeyConditionExpression=Key("list_id").eq(list_id) & Key("user_public_id").eq(user_public_id),
         Limit=1,
     )
     items = response.get("Items", [])
