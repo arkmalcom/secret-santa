@@ -3,21 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import './style.css';
 
 function App() {
-  const [participants, setParticipants] = useState([{ id: 1, name: '' }]);
+  const [participants, setParticipants] = useState([{ id: 1, name: '', phone_number: '' }]);
   const BASE_API_URL = "https://u9snk0ziib.execute-api.us-east-2.amazonaws.com/api"
   const navigate = useNavigate();
 
   function addParticipant() {
-    setParticipants([...participants, { id: participants.length + 1, name: '' }]);
+    setParticipants([...participants, { id: participants.length + 1, name: '', phone_number: '' }]);
   }
 
-  function handleChange(id: number, value: string) {
-    setParticipants(participants.map(p => (p.id === id ? { ...p, name: value } : p)));
+  function handleChange(id: number, field: 'name' | 'phone_number', value: string) {
+    setParticipants(participants.map(p => 
+      p.id === id ? { ...p, [field]: value } : p
+    ));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const users = participants.map(participant => ({ name: participant.name }));
+    const users = participants.map(participant => ({
+      name: participant.name,
+      phone_number: participant.phone_number,
+    }));
 
     try {
       const response = await fetch(`${BASE_API_URL}/lists/create`, {
@@ -59,12 +64,22 @@ function App() {
                 </label>
                 <input
                   type="text"
-                  id={`participant-${participant.id}`}
-                  name={`participant-${participant.id}`}
+                  id={`participant-name-${participant.id}`}
+                  name={`participant-name-${participant.id}`}
                   value={participant.name}
-                  onChange={e => handleChange(participant.id, e.target.value)}
+                  onChange={e => handleChange(participant.id, 'name', e.target.value)}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Nombre"
+                  required
+                />
+                <input
+                  type="tel"
+                  id={`participant-phone-${participant.id}`}
+                  name={`participant-phone-${participant.id}`}
+                  value={participant.phone_number}
+                  onChange={e => handleChange(participant.id, 'phone_number', e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Teléfono"
                   required
                 />
               </div>

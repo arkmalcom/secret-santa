@@ -9,6 +9,7 @@ from utils import (
     batch_write_to_dynamodb,
     get_participant_by_public_id,
     get_random_pairing,
+    get_user_from_dynamodb_by_phone,
     get_user_pairing,
     update_assigned_participant,
     write_to_dynamodb,
@@ -80,6 +81,18 @@ def get_secret_santa_pairing(list_id: str, giving_user_id: str) -> JSONResponse:
             **pairing,
             "list_id": list_id,
         },
+        status_code=200,
+    )
+
+
+@api_router.get("/users/{list_id}/{phone_number}")
+def get_user_by_phone_number(list_id: str, phone_number: str) -> JSONResponse:
+    """Get a user by phone number."""
+    user = get_user_from_dynamodb_by_phone(list_id, phone_number)
+
+    return JSONResponse(
+        content=user,
+        status_code=200,
     )
 
 
