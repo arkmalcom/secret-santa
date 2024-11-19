@@ -56,8 +56,7 @@ function Pair() {
       } else if (!pairResponse.ok) {
         throw new Error("Error al obtener el emparejamiento");
       } else {
-        const pairData = await pairResponse.json();
-        pairedUser = pairData.receiving_user_name;
+        throw new Error("Tu angelito ya ha sido asignado.");
       }
     } catch (err: any) {
       setError(err.message || "Ocurrió un error");
@@ -75,6 +74,14 @@ function Pair() {
           <p className="text-xl mt-2">
             El nombre de tu angelito es:{" "}
             <span className="text-red-500 font-semibold">{pairName}</span>
+          </p>
+          <p>
+            Por favor escribe el nombre o toma una captura de pantalla para no
+            olvidarlo.
+          </p>
+          <p>
+            Para mantener el angelito secreto, no podras acceder a esta pagina
+            nuevamente.
           </p>
         </div>
       ) : (
