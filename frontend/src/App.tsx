@@ -89,7 +89,7 @@ function App() {
             id="add-participant"
             type="button"
             onClick={addParticipant}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:ring focus:ring-blue-300 mt-4"
+            className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:ring focus:ring-red-800 mt-4"
           >
             Agregar Participante
           </button>
