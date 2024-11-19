@@ -1,4 +1,5 @@
 import random
+from urllib.parse import unquote
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
@@ -54,10 +55,10 @@ def get_participant_by_public_id(list_id: str, user_public_id: str) -> dict:
     )
     items = response.get("Items", [])
 
-    if items:
-        return User(**items[0])
+    if not items:
+        raise HTTPException(status_code=404, detail="Participant not found")
 
-    raise HTTPException(status_code=404, detail="Participant not found")
+    return User(**items[0])
 
 
 def update_assigned_participant(list_id: str, user_public_id: str) -> None:
@@ -78,31 +79,34 @@ def get_user_pairing(list_id: str, giving_user_id: str) -> dict:
     response = table.get_item(Key={"list_id": list_id, "giving_user_id": giving_user_id})
     item = response.get("Item", {})
 
-    if item:
-        return Pairing(**item).model_dump()
+    if not item:
+        raise HTTPException(status_code=404, detail="Pairing not found")
 
-    raise HTTPException(status_code=404, detail="Pairing not found")
+    return Pairing(**item).model_dump()
+
+
+def clean_phone_number(phone_number: str) -> str:
+    """Clean a phone number."""
+    phone_number = unquote(phone_number)
+    phone_number = phone_number.replace("(", "").replace(")", "").replace("-", "").strip()
+
+    return f"tel:+1-{phone_number[:3]}-{phone_number[3:6]}-{phone_number[6:]}"
 
 
 def get_user_from_dynamodb_by_phone(list_id: str, phone_number: str) -> dict:
     """Get a user from a DynamoDB table by phone number."""
     table = dynamodb.Table("secret_santa_participants")
 
-    # Check if the phone number already has hyphens
-    if "-" not in phone_number:
-        phone_number = f"tel:+1-{phone_number[:3]}-{phone_number[3:6]}-{phone_number[6:]}"
-    else:
-        phone_number = f"tel:+1-{phone_number}"
+    phone_number = clean_phone_number(phone_number)
 
     response = table.query(
         KeyConditionExpression=Key("list_id").eq(list_id),
         FilterExpression=Attr("phone_number").eq(phone_number),
-        Limit=1,
     )
 
     items = response.get("Items", [])
 
-    if items:
-        return User(**items[0])
+    if not items:
+        raise HTTPException(status_code=404, detail="User not found")
 
-    raise HTTPException(status_code=404, detail="User not found")
+    return User(**items[0]).model_dump()

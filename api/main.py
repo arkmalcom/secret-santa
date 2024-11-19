@@ -66,7 +66,11 @@ def create_secret_santa_pairing(list_id: str, user_public_id: str) -> JSONRespon
     update_assigned_participant(list_id, receiving_user.user_public_id)
 
     return JSONResponse(
-        content={"message": "Successfully created secret santa pairing."},
+        content={
+            "message": "Successfully created secret santa pairing.",
+            "giving_user_name": giving_user.name,
+            "receiving_user_name": receiving_user.name,
+        },
         status_code=201,
     )
 
