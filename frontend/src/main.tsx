@@ -7,7 +7,7 @@ import Pair from "./Pair.tsx";
 
 function Main() {
   return (
-    <Router>
+    <Router basename="/secret-santa/">
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/list/:listId" element={<List />} />
