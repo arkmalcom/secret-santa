@@ -22,7 +22,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://arkmalcom.github.io/secret-santa/",
+        "https://arkmalcom.github.io",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
