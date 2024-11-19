@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import App from './App.tsx';
-import List from './List.tsx';
-import Pair from './Pair.tsx';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import App from "./App.tsx";
+import List from "./List.tsx";
+import Pair from "./Pair.tsx";
 
 function Main() {
   return (
@@ -17,8 +17,8 @@ function Main() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Main />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
