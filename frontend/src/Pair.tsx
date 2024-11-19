@@ -97,7 +97,7 @@ function Pair() {
               className="w-full bg-green-800 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:ring focus:ring-blue-300"
               disabled={loading}
             >
-              {loading ? "Cargando..." : "Verificar"}
+              {loading ? "Buscando tu angelito..." : "Buscar mi angelito"}
             </button>
           </form>
         </div>
