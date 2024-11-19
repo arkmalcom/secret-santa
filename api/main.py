@@ -20,8 +20,10 @@ api_router = APIRouter()
 
 app.add_middleware(
     CORSMiddleware,
-    # TODO: Modify the `allow_origins` parameter to only allow requests from the frontend URL.
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://arkmalcom.github.io/secret-santa/",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
